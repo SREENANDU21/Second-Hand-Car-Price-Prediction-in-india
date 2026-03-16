@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second-Hand Car Price Estimator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🚗</span>
+            <span class="logo-text">AutoVal</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Estimator</a>
+            <a href="#metrics">Model Intranet</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="page-header">
+            <h1>What's your car worth?</h1>
+            <p>Get a near-perfect estimate powered by India's most advanced used car pricing engine.</p>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="form-card glass-panel">
+                <h2>Car Details</h2>
+                <form id="prediction-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="state">State / Territory</label>
+                            <select id="state" name="state" required>
+                                <option value="" disabled selected>Select State</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="company">Make / Brand</label>
+                            <select id="company" name="company" required>
+                                <option value="" disabled selected>Select Brand</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="model">Car Model</label>
+                            <select id="model" name="model" required disabled>
+                                <option value="" disabled selected>Select Model</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="year">Purchase Year</label>
+                            <input type="number" id="year" name="year" min="2005" max="2024" placeholder="e.g., 2018" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="original_price">Original Price (₹)</label>
+                            <input type="number" id="original_price" name="original_price" placeholder="e.g., 1200000" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="km_driven">Kilometers Driven</label>
+                            <input type="number" id="km_driven" name="km_driven" placeholder="e.g., 45000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fuel_type">Fuel Type</label>
+                            <select id="fuel_type" name="fuel_type" required>
+                                <option value="" disabled selected>Select FuelType</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="accident_score">Accident History (1=Clean, 10=Total Loss)</label>
+                            <input type="range" id="accident_score" name="accident_score" min="1" max="10" value="1" class="slider">
+                            <span id="accident_val" class="slider-val">1</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="repair_cost">Any Post-Accident Repair Costs (₹)</label>
+                            <input type="number" id="repair_cost" name="repair_cost" value="0" min="0" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submit-btn">
+                        <span class="btn-text">Calculate Valuation</span>
+                        <div class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+
+            <div class="results-card glass-panel">
+                <div class="result-placeholder" id="result-placeholder">
+                    <span class="icon">✨</span>
+                    <p>Enter your car's details to see the predicted market value.</p>
+                </div>
+                
+                <div class="result-content hidden" id="result-content">
+                    <p class="result-label">Estimated Current Market Value</p>
+                    <h2 class="price-display" id="predicted-price">₹ --</h2>
+                    
+                    <div class="value-meter">
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meter-fill" style="width: 50%;"></div>
+                        </div>
+                        <div class="meter-labels">
+                            <span>Poor Condition</span>
+                            <span>Excellent Condition</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <p id="depreciation-info">Depreciation info will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="metrics" class="metrics-section">
+            <h2>Model Performance Dashboard</h2>
+            <div class="metrics-grid">
+                <div class="metric-card glass-panel">
+                    <h3>Accuracy Score (R²)</h3>
+                    <p class="metric-value" id="r2-score">--</p>
+                    <p class="metric-desc">Indicates how well the model explains price variance (higher is better).</p>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3>Mean Absolute Error</h3>
+                    <p class="metric-value" id="mae-score">--</p>
+                    <p class="metric-desc">Average difference between actual and predicted prices.</p>
+                </div>
+            </div>
+            
+            <div class="graphs-container glass-panel" style="margin-top: 2rem;">
+                <div class="graph-box">
+                    <h3>Actual vs Predicted Values</h3>
+                    <img src="{{ url_for('static', filename='actual_vs_predicted.png') }}" alt="Actual vs Predicted Graph" style="width: 100%; border-radius: 10px;">
+                </div>
+                <div class="graph-box" style="margin-top: 2rem;">
+                    <h3>Feature Importance</h3>
+                    <img src="{{ url_for('static', filename='feature_importance.png') }}" alt="Feature Importance Graph" style="width: 100%; border-radius: 10px;">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
