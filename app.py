@@ -104,6 +104,8 @@ def predict():
         })
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 400
 
 @app.route('/metrics', methods=['GET'])
