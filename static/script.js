@@ -111,6 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(form);
         const requestData = Object.fromEntries(formData.entries());
         
+        // Frontend Validation for Dropdowns
+        if (!requestData.state || !requestData.company || !requestData.model || !requestData.fuel_type) {
+            alert("Please select all required fields (State, Brand, Model, and Fuel Type) before calculating.");
+            btnText.classList.remove('hidden');
+            loader.classList.add('hidden');
+            submitBtn.disabled = false;
+            return;
+        }
+        
         try {
             const response = await fetch('/predict', {
                 method: 'POST',
